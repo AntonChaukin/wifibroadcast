@@ -30,17 +30,23 @@ target_link_libraries(udp_packet_drop_util PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 add_executable(test_txrx wifibroadcast/executables/test_txrx.cpp)
 target_link_libraries(test_txrx PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 
-add_executable(example_hello wifibroadcast/executables/example_hello.cpp)
-target_link_libraries(example_hello PRIVATE ${WB_TARGET_LINK_LIBRARIES})
+add_executable(air_node wifibroadcast/executables/air_node.cpp)
+target_link_libraries(air_node PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 
-add_executable(example_udp wifibroadcast/executables/example_udp.cpp)
-target_link_libraries(example_udp PRIVATE ${WB_TARGET_LINK_LIBRARIES})
+add_executable(ground_node wifibroadcast/executables/ground_node.cpp)
+target_link_libraries(ground_node PRIVATE ${WB_TARGET_LINK_LIBRARIES})
+
+#add_executable(example_hello wifibroadcast/executables/example_hello.cpp)
+#target_link_libraries(example_hello PRIVATE ${WB_TARGET_LINK_LIBRARIES})
+
+#add_executable(example_udp wifibroadcast/executables/example_udp.cpp)
+#target_link_libraries(example_udp PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 
 add_executable(injection_rate_test wifibroadcast/executables/injection_rate_test.cpp)
 target_link_libraries(injection_rate_test PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 
-add_executable(example_pollute wifibroadcast/executables/example_pollute.cpp)
-target_link_libraries(example_pollute PRIVATE ${WB_TARGET_LINK_LIBRARIES})
+#add_executable(example_pollute wifibroadcast/executables/example_pollute.cpp)
+#target_link_libraries(example_pollute PRIVATE ${WB_TARGET_LINK_LIBRARIES})
 
 add_executable(test_listen wifibroadcast/executables/test_listen.cpp)
 target_link_libraries(test_listen PRIVATE ${WB_TARGET_LINK_LIBRARIES})
@@ -59,7 +65,9 @@ install(TARGETS benchmark DESTINATION bin)
 install(TARGETS udp_generator_validator DESTINATION bin)
 install(TARGETS unit_test DESTINATION bin)
 install(TARGETS socket_helper_test DESTINATION bin)
-install(TARGETS example_hello DESTINATION bin)
-install(TARGETS example_udp DESTINATION bin)
+install(TARGETS air_node DESTINATION bin)
+install(TARGETS ground_node DESTINATION bin)
+#install(TARGETS example_hello DESTINATION bin)
+#install(TARGETS example_udp DESTINATION bin)
 
 
