@@ -43,7 +43,7 @@ int main(int argc, char *const *argv) {
     // 1. Ініціалізація радіо-ядра (БЕЗ милиць у вигляді raw_socket)
     std::vector<wifibroadcast::WifiCard> cards = {{card, 1}};
     WBTxRx::Options txrx_options{};
-    txrx_options.tx_without_pcap = false; // ВИКОРИСТОВУЄМО СТАНДАРТНИЙ PCAP INJECT
+    txrx_options.tx_without_pcap = true;
 
     auto radiotap_holder = std::make_shared<RadiotapHeaderTxHolder>();
     std::shared_ptr<WBTxRx> txrx = std::make_shared<WBTxRx>(cards, txrx_options, radiotap_holder);
