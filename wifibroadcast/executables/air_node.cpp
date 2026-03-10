@@ -6,9 +6,10 @@
 
 #include "../src/WBTxRx.h"
 #include "../src/WBStreamTx.h"
-#include "../src/legacy/WBStreamTxUDP.h"
 #include "../src/wifibroadcast_spdlog.h"
 #include "../src/WBPacketHeader.h"
+#include "../src/HelperSources/SocketHelper.hpp"
+#include "../src/WBVideoStreamTx.h"
 
 // Функція для налаштування UART під телеметрію
 int setup_serial(const char* port_name) {
@@ -59,13 +60,29 @@ int main(int argc, char *const *argv) {
     std::shared_ptr<WBTxRx> txrx = std::make_shared<WBTxRx>(cards, txrx_options, radiotap_holder);
     txrx->start_receiving();
 
-    // 2. Ініціалізація ВІДЕО-потоку (Радіо-Порт 0)
-    WBStreamTx::Options video_options{};
+    // 2. Ініціалізація ВІДЕО-потоку (Радіо-Порт 0, FEC працює ідеально!)
+    WBVideoStreamTx::Options video_options{};
     video_options.radio_port = 0;
-    video_options.enable_fec = true; // Для відео обов'язково
-    video_options.default_packet_type = WB_PACKET_TYPE_VIDEO;
-    auto video_tx = std::make_unique<WBStreamTxUDP>(txrx, video_options, 8, 5600);
-    console->info("Video Stream initialized on UDP 5600 -> Radio Port 0");
+    // Створюємо сучасний передавач відео
+    auto video_tx = std::make_shared<WBVideoStreamTx>(txrx, video_options, radiotap_holder);
+
+    // Створюємо UDP приймач, який ловитиме відео від GStreamer на порту 5600
+    SocketHelper::UDPReceiver udp_receiver(
+        SocketHelper::ADDRESS_LOCALHOST, 5600,
+        [&video_tx](const uint8_t *payload, const std::size_t payloadSize) {
+            // Копіюємо отримані байти у розумний вказівник
+            auto frame = std::make_shared<std::vector<uint8_t>>(payload, payload + payloadSize);
+
+            // Передаємо кадр у відеотракт:
+            // 1024 - максимальний розмір блоку (MTU)
+            // 8 - відсоток надлишковості FEC (fec_overhead_perc)
+            video_tx->enqueue_frame(frame, 1024, 8);
+        });
+
+    // Запускаємо слухання UDP у фоновому потоці
+    udp_receiver.runInBackground();
+
+    console->info("Modern Video Stream initialized: UDP 5600 -> WBVideoStreamTx -> Radio Port 0");
 
     // 3. Ініціалізація ТЕЛЕМЕТРІЇ (Радіо-Порт 1)
     WBStreamTx::Options telemetry_options{};
