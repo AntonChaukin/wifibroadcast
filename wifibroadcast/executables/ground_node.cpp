@@ -34,7 +34,7 @@ int main(int argc, char *const *argv) {
     std::vector<wifibroadcast::WifiCard> cards = {{card, 1}};
     WBTxRx::Options txrx_options{};
     txrx_options.use_gnd_identifier = true; // Обов'язково для землі
-    txrx_options.tx_without_pcap = true;
+    txrx_options.tx_without_pcap = false;
 
     auto radiotap_holder = std::make_shared<RadiotapHeaderTxHolder>();
     std::shared_ptr<WBTxRx> txrx = std::make_shared<WBTxRx>(cards, txrx_options, radiotap_holder);

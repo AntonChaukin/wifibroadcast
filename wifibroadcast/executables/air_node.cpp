@@ -43,7 +43,7 @@ int main(int argc, char *const *argv) {
     // 1. Ініціалізація радіо-ядра (БЕЗ милиць у вигляді raw_socket)
     std::vector<wifibroadcast::WifiCard> cards = {{card, 1}};
     WBTxRx::Options txrx_options{};
-    txrx_options.tx_without_pcap = true;
+    txrx_options.tx_without_pcap = false;
 
     auto radiotap_holder = std::make_shared<RadiotapHeaderTxHolder>();
     std::shared_ptr<WBTxRx> txrx = std::make_shared<WBTxRx>(cards, txrx_options, radiotap_holder);
@@ -63,7 +63,7 @@ int main(int argc, char *const *argv) {
         [video_tx](const uint8_t *payload, const std::size_t payloadSize) {
             auto frame = std::make_shared<std::vector<uint8_t>>(payload, payload + payloadSize);
             // Цей метод коректно поріже кадр, додасть FEC і загорне у WBPacketHeader
-            video_tx->try_enqueue_frame(frame, 1024, 8);
+            video_tx->try_enqueue_frame(frame, 256, 30);
         });
     udp_receiver.runInBackground();
     console->info("Production Video Stream: UDP 5600 -> WBStreamTx(FEC) -> Radio Port 0");
